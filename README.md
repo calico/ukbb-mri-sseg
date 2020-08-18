@@ -2,6 +2,7 @@
 UKBB MRI semantic segmentation for Abdominal Dixon and other modalities
 
 This repository uses [git lfs](https://git-lfs.github.com/) for trained model files (inside `trained_models`).
+Please use `git lfs pull` or `git lfs clone`.
 
 ## Worked Example with processed UKBB Data
 We use an external published repository to process the raw UKBB data:
@@ -44,11 +45,25 @@ PROCESSED_NIFTI_DIR=processed_nifti
 OUTPUT_FOLDER=/tmp/ukbb_mri_sseg_output
 ```
 
+We download segmentation model weights. In the case of DIXON weights a further extraction step is needed.
+```
+git lfs pull
+cat trained_models/knee_to_neck_dixon_split.tar.* | tar -xvf - -C trained_models/
+```
+
+The `tar` extraction command above might not work all systems. Alternatively,
+```
+cd trained_models
+cat knee_to_neck_dixon_split.tar.* | tar -xvf -
+cd ..
+```
+
 
 ### Neck-to-knee DIXON Segmentation
 
 This command performs inference on dixon data. See `/tmp/ukbb_mri_sseg_output` for output
 ```
+
 DIXON_NIFTI_DIR=$PROCESSED_NIFTI_DIR/$SUBJECT_ID/nifti
 RESTORE_STRING=trained_models/knee_to_neck_dixon/20200401-mpgp118-best_xe/model.ckpt-20000
 python3 public_sseg/infer_knee_to_neck_dixon.py \
@@ -89,10 +104,10 @@ python3 public_sseg/infer_liver_ideal_multiecho.py --action=infer \
 ```
 
 ### Liver Multiecho 2D Segmentation
-No worked example is available. THe UKBB did release a reference resource file for this modality. If you already have the multiecho files downloaded and processed through the pipeline, and placed amongst the other nifti files inside `processed_nifti/ESS3TE4SJ3DEP5C5/nifti`, then the command would hypothetically be:
+No worked example is available. The UKBB did release a reference resource file for this modality. If you already have the multiecho files downloaded and processed through the pipeline, and placed amongst the other nifti files inside `processed_nifti/ESS3TE4SJ3DEP5C5/nifti`, then command to segment the multiecho data would be:
 
 ```
-LIVER_MULTIECHO_MODEL_H5=trained_models/liver_multiecho/-----.h5
+LIVER_MULTIECHO_MODEL_H5=trained_models/liver_multiecho/20191002_withphase_low_liver_2d_multiecho.h5
 python3 public_sseg/infer_liver_ideal_multiecho.py --action=infer \
     --output_folder=$OUTPUT_FOLDER \
     --data_modality=multiecho_liver \
