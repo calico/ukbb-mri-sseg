@@ -331,13 +331,14 @@ def main(_ignore):
         logging.info('read_and_transpose raw shape {}'.format(repr(x.shape)))
         return np.einsum(einsum_str, x)
 
-    input_einsum_str = 'whd->dhw'
-    output_einsum_str = 'dhwk->hwdk'
+    input_einsum_str = FLAGS.input_einsum_str
+    output_einsum_str = FLAGS.output_einsum_str
+    logging.info("input_einsum_str: {}".format(input_einsum_str))
+    logging.info("output_einsum_str: {}".format(output_einsum_str))
     mri_pixels_list = [read_and_transpose(nifti_path, input_einsum_str) for nifti_path in
                        [FLAGS.fat, FLAGS.water, FLAGS.inphase, FLAGS.outphase, FLAGS.mask]]
 
     mri_pixels_1DHWC = np.expand_dims(np.stack(mri_pixels_list, axis=-1), axis=0)
-
     logging.info('before division max: {}'.format(repr(mri_pixels_1DHWC.max(axis=(0, 1, 2, 3)))))
     logging.info('before division min: {}'.format(repr(mri_pixels_1DHWC.min(axis=(0, 1, 2, 3)))))
     logging.info('before division std: {}'.format(repr(mri_pixels_1DHWC.std(axis=(0, 1, 2, 3)))))
@@ -440,6 +441,12 @@ if __name__ == "__main__":
         "restore_string",
         None,
         "restore string. If left None, auto-generate by tf.train.latest_checkpoint(restore_latest_dir) ")
+    flags.DEFINE_string(
+        "input_einsum_str", "whd->dhw",
+        "einsum string used to transpose each of the input numpy arrays after being read from nifti files")
+    flags.DEFINE_string(
+        "output_einsum_str", "dhwk->whdk",
+        "einsum string used to transpose each of the model output arays before saving to disk.")
 
     flags.DEFINE_float("min_prob_thresh", 0.01, "min_prob_thresh: minimal probability threshold required to consider as foreground")
 
