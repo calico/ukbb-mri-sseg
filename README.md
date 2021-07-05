@@ -6,7 +6,7 @@ Please use `git lfs pull` or `git lfs clone`.
 
 ## Worked Example with processed UKBB Data
 We use an external published repository to process the raw UKBB data:
-https://github.com/recoh/pipeline_private/
+https://github.com/recoh/pipeline/
 
 Please follow the installation instructions there to download and install.
 After installing, activate the command line environment, and download process these datasets.
