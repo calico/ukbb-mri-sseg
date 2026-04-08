@@ -8,5 +8,3 @@ For questions, please contact:
 
 **Madeleine Cule**  
 cule@calicolabs.com
-
-EOF
